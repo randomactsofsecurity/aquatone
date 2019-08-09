@@ -109,6 +109,17 @@ func (s *Session) End() {
 	s.Stats.FinishedAt = time.Now()
 }
 
+func (s *Session) AddPageFromSession(page *Page, url string) (error){
+	s.Lock()
+	defer s.Unlock()
+	if _, ok := s.Pages[url]; ok{
+		return nil
+	}
+
+	s.Pages[url] = page
+	return nil
+}
+
 func (s *Session) AddPage(url string) (*Page, error) {
 	s.Lock()
 	defer s.Unlock()
@@ -200,7 +211,7 @@ func (s *Session) initWaitGroup() {
 }
 
 func (s *Session) initDirectories() {
-	for _, d := range []string{"headers", "html", "screenshots"} {
+	for _, d := range []string{"headers", "html", "screenshots","sessions"} {
 		d = s.GetFilePath(d)
 		if _, err := os.Stat(d); os.IsNotExist(err) {
 			err = os.MkdirAll(d, 0755)
@@ -210,6 +221,17 @@ func (s *Session) initDirectories() {
 			}
 		}
 	}
+}
+
+func (s *Session) CreateDirectory(path string) bool{
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err = os.MkdirAll(path, 0755)
+		if err != nil {
+			s.Out.Fatal("Failed to create required directory %s\n", path)
+			os.Exit(1)
+		}
+	}
+	return true
 }
 
 func (s *Session) BaseFilenameFromURL(stru string) string {

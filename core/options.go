@@ -25,6 +25,7 @@ type Options struct {
 	Version           *bool
 	Similarity	  *float64
 	InputFile	  *string
+	ReClusterSessions *bool
 }
 
 func ParseOptions() (Options, error) {
@@ -47,6 +48,7 @@ func ParseOptions() (Options, error) {
 		Version:           flag.Bool("version", false, "Print current Aquatone version"),
 		Similarity:	   flag.Float64("similarity",0.80,"Cluster Similarity Float for Screenshots. Default 0.80"),
 		InputFile:	   flag.String("inputfile","","Input file to parse hosts (Nmap or Raw) rather than STDIN"),
+		ReClusterSessions: flag.Bool("reclustersessions",false,"Re-Cluster Sessions and Generate new report from values in /sessoins"),
 	}
 
 	flag.Parse()
